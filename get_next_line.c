@@ -46,7 +46,7 @@ char    *get_rest(node *head)
         total_length += strlen(temp->content);
         temp = temp->next;
     }
-    str = calloc(total_length + 1,sizeof(char));
+    str = ft_calloc(total_length + 1,sizeof(char));
     if (!str)
         return (NULL);
     while (head != NULL)
@@ -60,7 +60,10 @@ char    *get_rest(node *head)
         head = head->next;
     }
     if (!i)
+    {
+        free(str);
         return (NULL);
+    }
     *(str + i) = '\0';
     return (str);
 }
@@ -90,23 +93,28 @@ char    *get_next_line(int fd)
     static node *head;
     char *res;
 
-    buffer = calloc(BUFFER_SIZE + 1,sizeof(char));
+    buffer = ft_calloc(BUFFER_SIZE + 1,sizeof(char));
     if (!buffer)
         return (NULL);
-    if (fd < 0 ||  BUFFER_SIZE < 0)
+    if (fd < 0 ||  BUFFER_SIZE <= 0 || read(fd,buffer,0) < 0)
+    {
+        free(buffer);
         return (NULL);
+    }
     res = NULL;
     while (true)
     {
         nb_read = read(fd,buffer,BUFFER_SIZE);
         if (nb_read > 0)
         {
-            buffer[strlen(buffer)] = '\0';
+            buffer[nb_read] = '\0';
             ft_add_back(&head,buffer);
             res = ft_sanitize(&head);
-            // printf("res  == %s\n", res);
             if (res != NULL)
+            {
+                free(buffer);
                 return (res);
+            }
         }
         else
         {
@@ -116,5 +124,4 @@ char    *get_next_line(int fd)
             return (res);
         }
     }
-    free(buffer);
 }

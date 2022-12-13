@@ -40,35 +40,46 @@ void   ft_add_back(node **head,char *buffer)
         *head = line;
 }
 
+// [...] [..\n...][.....][....][]
+
+char *  ft_strchr(const char *s, int c)
+{
+    while (*s)
+    {
+        if (*s == (char)c)
+            return (char*)s;
+        s++;
+    }
+    if (*s == (char)c)
+        return (char*)s;
+    else
+        return (NULL);
+}
+
 size_t	ft_count(node *head)
 {
 	size_t counter;
-	static size_t tmp;
+	//static size_t tmp;
+	// int	no_nl;
 	size_t i;
 
-	counter = 0;
-	tmp = 0;
+	counter = 1;
+	// no_nl = 0;
 	while (head != NULL)
 	{
+		// if (ft_strchr(head->content,'\n'))
+		// 	no_nl += 1;
 		i = 0;
-		while (*((head->content) + i))
+		while (*((head->content) + i) != '\0')
 		{
 			if (*((head->content) + i) == '\n')
-				{
-					tmp += counter;
-					return (tmp);
-				};
+				return (counter);
 			counter++;
 			i++;
 		}
-		if (*((head->content) + i) == '\0')
-		{
-			tmp = 0;
-			// counter = 0;
-		}
 		head = head->next;
 	}
-	return (tmp);
+	return (0);
 }
 
 char *ft_sanitize(node **head)
@@ -84,7 +95,7 @@ char *ft_sanitize(node **head)
 	i = 0;
 	if (!count)
 		return (NULL);
-	line = ft_calloc(count + 2, sizeof(char));
+	line = ft_calloc(count + 1, sizeof(char));
 	if (!line)
 		return (NULL);
 	while (n != NULL)
