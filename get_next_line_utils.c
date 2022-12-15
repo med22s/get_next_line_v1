@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mserghin <mserghin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/12/15 04:13:03 by mserghin          #+#    #+#             */
+/*   Updated: 2022/12/15 04:13:03 by mserghin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 char	*ft_strcpy(char *dst, char *src)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (src[i])
@@ -14,41 +26,40 @@ char	*ft_strcpy(char *dst, char *src)
 	return (dst);
 }
 
-void   ft_add_back(node **head,char *buffer)
+void	ft_add_back(t_line **head, char *buffer)
 {
-    node *line;
-    node *temp;
+	t_line	*line;
+	t_line	*temp;
+
 	if (!buffer)
 		return ;
-    line = malloc(sizeof(node));
-    if (!line)
-        return ;
-    line->content = ft_calloc(strlen(buffer) + 1,sizeof(char));
+	line = malloc(sizeof(t_line));
+	if (!line)
+		return ;
+	line->content = ft_calloc(strlen(buffer) + 1, sizeof(char));
 	if (!line->content)
 		return ;
-	line->content = ft_strcpy(line->content,buffer);
+	line->content = ft_strcpy(line->content, buffer);
 	line->reference = line->content;
-    line->next = NULL;
-    if (*head)
-    {
-        temp = *head;
-        while (temp->next != NULL)
-            temp = temp->next;
-        temp->next = line;
-    }
-    else
-        *head = line;
+	line->next = NULL;
+	if (*head)
+	{
+		temp = *head;
+		while (temp->next != NULL)
+			temp = temp->next;
+		temp->next = line;
+	}
+	else
+		*head = line;
 }
 
-// [...] [..\n...][.....][....][]
-
-size_t	ft_count(node *head)
+size_t	ft_count(t_line *head)
 {
-	size_t counter;
-	size_t i;
+	size_t	counter;
+	size_t	i;
 
 	counter = 1;
-	if(*(head->content) == '\0')
+	if (*(head->content) == '\0')
 		head = head->next;
 	while (head != NULL)
 	{
@@ -65,13 +76,13 @@ size_t	ft_count(node *head)
 	return (0);
 }
 
-char *ft_sanitize(node **head)
+char	*ft_sanitize(t_line **head)
 {
-	size_t count;
-	char *line;
-	node *n;
-	int i;
-	node *temp;
+	size_t	count;
+	char	*line;
+	t_line	*n;
+	int		i;
+	t_line	*temp;
 
 	n = *head;
 	count = ft_count(n);
@@ -104,118 +115,3 @@ char *ft_sanitize(node **head)
 	}
 	return (NULL);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// static int	get_number_substrings(char const *s, char c)
-// {
-// 	int	counter;
-// 	int	i;
-
-// 	counter = 0;
-// 	i = 0;
-// 	while (s[i])
-// 	{
-// 		if (s[i] != c)
-// 		{
-// 			counter++;
-// 			while (s[i] && s[i] != c)
-// 				i++;
-// 		}
-// 		else
-// 			i++;
-// 	}
-// 	return (counter);
-// }
-
-// static char	**free_tab(char **tab)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (tab[i])
-// 	{
-// 		free(tab[i]);
-// 		i++;
-// 	}
-// 	free(tab);
-// 	return (NULL);
-// }
-
-// static int	get_len(char const *str, char c, size_t *i)
-// {
-// 	int	len;
-
-// 	len = 0;
-// 	while (str[*i] && str[*i] != c)
-// 	{
-// 		len++;
-// 		(*i)++;
-// 	}
-// 	return (len);
-// }
-
-// static char	**split(char const *s, char c, char **sub_strings)
-// {
-// 	size_t	i;
-// 	size_t	start;
-// 	int		len;
-// 	int		index;
-
-// 	i = 0;
-// 	index = 0;
-// 	while (s[i])
-// 	{
-// 		while (s[i] && s[i] == c)
-// 			i++;
-// 		start = i;
-// 		len = get_len(s, c, &i);
-// 		if (i > start)
-// 		{
-// 			sub_strings[index] = ft_substr ((s + start), 0, len);
-// 			if (!sub_strings[index])
-// 				return (free_tab (sub_strings));
-// 			index++;
-// 		}
-// 		len = 0;
-// 	}
-// 	sub_strings[index] = 0;
-// 	return (sub_strings);
-// }
-
-// char	**ft_split(char const *s, char c)
-// {
-// 	char	**sub_strings;
-// 	if (!s)
-// 		return (NULL);
-// 	sub_strings = (char **)
-// 		malloc ((get_number_substrings (s, c) + 1) * sizeof (char *));
-// 	if (!sub_strings)
-// 		return (NULL);
-// 	return (split(s, c, sub_strings));
-// }
-
