@@ -28,19 +28,27 @@ void	*ft_calloc(size_t count, size_t size)
 	return (p);
 }
 
-char    *get_rest(node *head)
+
+
+char    *get_rest(node **head)
 {
     int total_length;
     char *str;
     int i;
     node *temp;
+    node *h;
 
     total_length = 0;
-    temp = head;
+    temp = *head;
+    h = *head;
     i = 0;
     
-    if (!head)
+    if (!*head)
         return (NULL);
+    if (ft_count(temp) > 0)
+    {
+        return (ft_sanitize(head));
+    }
     while (temp != NULL)
     {
         total_length += strlen(temp->content);
@@ -49,15 +57,15 @@ char    *get_rest(node *head)
     str = ft_calloc(total_length + 1,sizeof(char));
     if (!str)
         return (NULL);
-    while (head != NULL)
+    while (h != NULL)
     {
-        while (*(head->content) != '\0')
+        while (*((h)->content) != '\0')
         {
-            *(str + i) = *(head->content);
-            (head->content)++;
+            *(str + i) = *((h)->content);
+            ((h)->content)++;
             i++;
         }
-        head = head->next;
+        (h) = (h)->next;
     }
     if (!i)
     {
@@ -80,6 +88,8 @@ void	free_list(node **head)
 	{
 		next = temp->next;
         free(temp->reference);
+        temp->content = NULL;
+        temp->reference = NULL;
 		free(temp);
 		temp = next;
 	}
@@ -99,6 +109,7 @@ char    *get_next_line(int fd)
     if (fd < 0 ||  BUFFER_SIZE <= 0 || read(fd,buffer,0) < 0)
     {
         free(buffer);
+        free_list(&head);
         return (NULL);
     }
     res = NULL;
@@ -116,12 +127,23 @@ char    *get_next_line(int fd)
                 return (res);
             }
         }
+        else if (nb_read == 0)
+        {
+            res = get_rest(&head);
+            free(buffer);
+            if (!res)
+                free_list(&head);
+            return (res);
+        }
         else
         {
-            res = get_rest(head);
-            free(buffer);
             free_list(&head);
-            return (res);
+            free(buffer);
+            return (NULL);
         }
     }
 }
+
+/*
+https://twitter.com/i/status/1601908424496889858
+*/

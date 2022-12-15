@@ -7,6 +7,8 @@ int main(void)
     // if(ac > 1)
     fd = open("file1.txt",O_RDONLY);
     char *str;
+    // // int i = strlen("98765432109876543210987654321098765432109");
+    // printf("%d\n",i);
     while (true)
     {
         str = get_next_line(fd);

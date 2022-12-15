@@ -42,33 +42,16 @@ void   ft_add_back(node **head,char *buffer)
 
 // [...] [..\n...][.....][....][]
 
-char *  ft_strchr(const char *s, int c)
-{
-    while (*s)
-    {
-        if (*s == (char)c)
-            return (char*)s;
-        s++;
-    }
-    if (*s == (char)c)
-        return (char*)s;
-    else
-        return (NULL);
-}
-
 size_t	ft_count(node *head)
 {
 	size_t counter;
-	//static size_t tmp;
-	// int	no_nl;
 	size_t i;
 
 	counter = 1;
-	// no_nl = 0;
+	if(*(head->content) == '\0')
+		head = head->next;
 	while (head != NULL)
 	{
-		// if (ft_strchr(head->content,'\n'))
-		// 	no_nl += 1;
 		i = 0;
 		while (*((head->content) + i) != '\0')
 		{
