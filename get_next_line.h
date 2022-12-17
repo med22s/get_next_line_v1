@@ -31,7 +31,7 @@ typedef struct s_line
 	struct s_line	*next;
 }	t_line;
 char	*get_next_line(int fd);
-void	ft_add_back(t_line **head, char *buffer);
+void	ft_add_back(t_line **head, char *buffer, int nb_read);
 size_t	ft_count(t_line *head);
 char	*ft_sanitize(t_line **head);
 char	*get_rest(t_line **head);

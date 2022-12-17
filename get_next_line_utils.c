@@ -26,7 +26,7 @@ char	*ft_strcpy(char *dst, char *src)
 	return (dst);
 }
 
-void	ft_add_back(t_line **head, char *buffer)
+void	ft_add_back(t_line **head, char *buffer, int nb_read)
 {
 	t_line	*line;
 	t_line	*temp;
@@ -36,7 +36,7 @@ void	ft_add_back(t_line **head, char *buffer)
 	line = malloc(sizeof(t_line));
 	if (!line)
 		return ;
-	line->content = ft_calloc(strlen(buffer) + 1, sizeof(char));
+	line->content = malloc((nb_read + 1) * sizeof(char));
 	if (!line->content)
 		return ;
 	line->content = ft_strcpy(line->content, buffer);
@@ -76,22 +76,12 @@ size_t	ft_count(t_line *head)
 	return (0);
 }
 
-char	*ft_sanitize(t_line **head)
+static	char	*line_is(char *line, t_line **head, t_line *n)
 {
-	size_t	count;
-	char	*line;
-	t_line	*n;
-	int		i;
 	t_line	*temp;
+	int		i;
 
-	n = *head;
-	count = ft_count(n);
 	i = 0;
-	if (!count)
-		return (NULL);
-	line = ft_calloc(count + 1, sizeof(char));
-	if (!line)
-		return (NULL);
 	while (n != NULL)
 	{
 		while (*(n->content))
@@ -101,8 +91,7 @@ char	*ft_sanitize(t_line **head)
 				*(line + (i++)) = '\n';
 				*(line + i) = '\0';
 				(n->content)++;
-				*head = n;
-				return (line);
+				return (*head = n, line);
 			}
 			else
 				*(line + (i++)) = *(n->content);
@@ -114,4 +103,20 @@ char	*ft_sanitize(t_line **head)
 		n = temp;
 	}
 	return (NULL);
+}
+
+char	*ft_sanitize(t_line **head)
+{
+	size_t	count;
+	char	*line;
+	t_line	*n;
+
+	n = *head;
+	count = ft_count(n);
+	if (!count)
+		return (NULL);
+	line = malloc((count + 1) * sizeof(char));
+	if (!line)
+		return (NULL);
+	return (line_is(line, head, n));
 }

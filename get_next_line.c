@@ -11,57 +11,14 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/**
- * hello world.$
- * Goodbye.
-*/
-void	ft_bzero(void *s, size_t n)
+
+char	*get_rest_helper(t_line *h, int total_length)
 {
-	unsigned char	*b;
-	size_t			i;
-
-	i = 0;
-	b = (unsigned char *)s;
-	while (i < n)
-	{
-		b[i] = '\0';
-		i++;
-	}
-}
-
-void	*ft_calloc(size_t count, size_t size)
-{
-	char	*p;
-
-	p = (char *)malloc(size * count);
-	if (!p)
-		return (NULL);
-	ft_bzero (p, count * size);
-	return (p);
-}
-
-char	*get_rest(t_line **head)
-{
-	int		total_length;
 	char	*str;
 	int		i;
-	t_line	*temp;
-	t_line	*h;
 
-	total_length = 0;
-	temp = *head;
-	h = *head;
 	i = 0;
-	if (!*head)
-		return (NULL);
-	if (ft_count(temp) > 0)
-		return (ft_sanitize(head));
-	while (temp != NULL)
-	{
-		total_length += strlen(temp->content);
-		temp = temp->next;
-	}
-	str = ft_calloc(total_length + 1, sizeof(char));
+	str = malloc((total_length + 1) * sizeof(char));
 	if (!str)
 		return (NULL);
 	while (h != NULL)
@@ -83,12 +40,40 @@ char	*get_rest(t_line **head)
 	return (str);
 }
 
+char	*get_rest(t_line **head)
+{
+	int		total_length;
+	char	*str;
+	int		i;
+	t_line	*temp;
+
+	total_length = 0;
+	temp = *head;
+	i = 0;
+	if (!(*head))
+		return (NULL);
+	if (ft_count(temp) > 0)
+		return (ft_sanitize(head));
+	while (temp != NULL)
+	{
+		while (temp->content[i])
+			i++;
+		total_length += i;
+		temp = temp->next;
+		i = 0;
+	}
+	str = get_rest_helper(*head, total_length);
+	if (!str)
+		return (NULL);
+	return (str);
+}
+
 void	free_list(t_line **head)
 {
 	t_line	*temp;
 	t_line	*next;
 
-	if (!head)
+	if (!head || !(*head))
 		return ;
 	temp = *head;
 	while (temp != NULL)
@@ -103,54 +88,45 @@ void	free_list(t_line **head)
 	*head = NULL;
 }
 
-char	*get_next_line(int fd)
+static	char	*readen(char *buffer, int nb_read, t_line **head, int fd)
 {
-	char		*buffer;
-	size_t		nb_read;
-	static t_line	*head;
 	char		*res;
 
-	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer)
-		return (NULL);
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, buffer, 0) < 0)
-	{
-		free(buffer);
-		free_list(&head);
-		return (NULL);
-	}
 	res = NULL;
 	while (true)
 	{
 		nb_read = read(fd, buffer, BUFFER_SIZE);
-		if (nb_read > 0)
+		if ((int)nb_read > 0)
 		{
 			buffer[nb_read] = '\0';
-			ft_add_back(&head, buffer);
-			res = ft_sanitize(&head);
+			ft_add_back(head, buffer,nb_read);
+			res = ft_sanitize(head);
 			if (res != NULL)
-			{
-				free(buffer);
-				return (res);
-			}
+				return (free(buffer), res);
 		}
-		else if (nb_read == 0)
+		else if ((int)nb_read == 0)
 		{
-			res = get_rest(&head);
+			res = get_rest(head);
 			free(buffer);
 			if (!res)
-				free_list(&head);
+				free_list(head);
 			return (res);
 		}
 		else
-		{
-			free_list(&head);
-			free(buffer);
-			return (NULL);
-		}
+			return (free_list(head), free(buffer), NULL);
 	}
 }
+char	*get_next_line(int fd)
+{
+	char		*buffer;
+	ssize_t		nb_read;
+	static t_line	*head;
 
-/*
-https://twitter.com/i/status/1601908424496889858
-*/
+	nb_read = 0;
+	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buffer)
+		return (NULL);
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, buffer, 0) < 0)
+		return (free(buffer), free_list(&head), NULL);
+	return (readen(buffer, nb_read, &head, fd));
+}

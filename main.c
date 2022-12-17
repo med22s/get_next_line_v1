@@ -3,12 +3,11 @@
 
 int main(void)
 {
-     int fd;
+    int fd;
+    //size_t rd;
     // if(ac > 1)
     fd = open("file1.txt",O_RDONLY);
     char *str;
-    // // int i = strlen("98765432109876543210987654321098765432109");
-    // printf("%d\n",i);
     while (true)
     {
         str = get_next_line(fd);
@@ -16,12 +15,9 @@ int main(void)
             break;
         printf("%s",str);
     }
-    // char *ptr = calloc(60,1);
-    // ptr[0] = 'a';
-    // ptr[1] = 'b';
-    // ptr[2] = 'c';
-    // ptr[3] = 'd';
-
-    // printf("length is : %lu\n",strlen(ptr));
+    // str = malloc((BUFFER_SIZE + 1) * sizeof(char));
+    // rd = read(fd,str,BUFFER_SIZE);
+    // printf("num of read is : %d\n",(int)rd);
+    close(fd);
     return 0;
 }
